@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Tag Familiars — AprilTag AR</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color: #fff; font: 14px system-ui, sans-serif; }
+  #stage { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  #stage video, #stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #status { position: fixed; top: calc(8px + env(safe-area-inset-top)); left: 8px; right: 8px; font: 12px ui-monospace, monospace;
+            background: rgba(0,0,0,.55); padding: 5px 8px; border-radius: 6px; width: fit-content; }
+  #ui { position: fixed; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center;
+        padding: 10px 10px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, rgba(0,0,0,.7)); }
+  button, .btn { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 999px;
+                 padding: 8px 14px; font: inherit; cursor: pointer; }
+  button.on { background: #f2c14e; color: #111; border-color: #f2c14e; }
+  .btn input { display: none; }
+  #fovwrap { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  #start { position: fixed; inset: 0; margin: auto; width: 220px; height: 60px; font-size: 18px; background: #f2c14e; color: #111; z-index: 5; }
+  #tagview { position: fixed; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 10; }
+  #tagview[hidden] { display: none; }
+  #tagsvg { width: min(80vw, 80vh); } #tagsvg svg { width: 100%; height: auto; image-rendering: pixelated; display: block; }
+</style>
+<!-- AprilTag detection: js-aruco2 (pure JS). Defines globals CV and AR. -->
+<script src="https://cdn.jsdelivr.net/npm/js-aruco2@2.0.0/src/cv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-aruco2@2.0.0/src/aruco.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-aruco2@2.0.0/src/dictionaries/apriltag_36h11.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+  <div id="stage"><video id="cam" playsinline muted autoplay></video></div>
+  <div id="status">tap Start, point at a tag36h11</div>
+  <button id="start">Start camera</button>
+  <div id="ui">
+    <button data-model="cat">Cat</button>
+    <button data-model="bird">Clockwork bird</button>
+    <button data-model="stirner">Stirner</button>
+    <label class="btn">Load .glb<input id="glb" type="file" accept=".glb,model/gltf-binary"></label>
+    <button id="showtag">Show tag</button>
+    <span id="fovwrap">FOV <input id="fov" type="range" min="45" max="90" step="1"> <span id="fovv"></span></span>
+  </div>
+  <div id="tagview" hidden><div id="tagsvg"></div></div>
+  <script type="module" src="./ar.js"></script>
+</body>
+</html>
